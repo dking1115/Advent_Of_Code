@@ -8,24 +8,29 @@ with open("day_5_input.txt","r") as file:
         for q,st in enumerate(sts):
             if st in line:
                 nums[q]=i+1
-    print(nums)
+    #print(nums)
     init_seeds=lines[0].split(":")[1].split(" ")
 
     #print(init_seeds)
     init_seeds_ints=[int(q) for q in init_seeds if q !=""]
     new_init_seeds_ints=[]
-    for i in range(0,len(init_seeds_ints),2):
+    """for i in range(0,len(init_seeds_ints),2):
         for q in range(init_seeds_ints[i],init_seeds_ints[i]+init_seeds_ints[i+1]):
-            new_init_seeds_ints.append(q)
+            new_init_seeds_ints.append(q)"""
+    seed_ranges=[]
+    for i in range(0,len(init_seeds_ints),2):
+        t=[init_seeds_ints[i],init_seeds_ints[i+1]]
+        seed_ranges.append(t)
+    #print(f"length of new seeds {len(new_init_seeds_ints)}")
     seed_soil=[]
     for i in range(nums[0],nums[1]-2):
-        print(i)
+        #print(i)
         line=lines[i]
         vals=line.split(" ")
         int_vals=[int(q) for q in vals]
         #print(int_vals)
         seed_soil.append(int_vals)
-    print(f"Seed_soil:{seed_soil}")
+    #print(f"Seed_soil:{seed_soil}")
     soil_fert=[]
     for i in range(nums[1],nums[2]-2):
         line=lines[i]
@@ -33,7 +38,7 @@ with open("day_5_input.txt","r") as file:
         int_vals=[int(q) for q in vals]
         #print(int_vals)
         soil_fert.append(int_vals)
-    print(f"soil_fert:{soil_fert}")
+    #print(f"soil_fert:{soil_fert}")
     fert_water=[]
     for i in range(nums[2],nums[3]-2):
         line=lines[i]
@@ -67,7 +72,7 @@ with open("day_5_input.txt","r") as file:
         temp_hum.append(int_vals)
     
     hum_location=[]
-    print(f"from {nums[6]} to {len(lines)}")
+    #print(f"from {nums[6]} to {len(lines)}")
     for i in range(nums[6],len(lines)):
         line=lines[i]
         vals=line.split(" ")
@@ -75,9 +80,22 @@ with open("day_5_input.txt","r") as file:
         #print(int_vals)
         hum_location.append(int_vals)
     
-    print(f"hum_location{hum_location}")
+    #print(f"hum_location{hum_location}")
 
+    rules=[seed_soil,soil_fert,fert_water,water_light,light_temp,temp_hum,hum_location]
+    for rule in rules:
+        for i in rule:
+            out_start=i[0]
+            in_start=i[1]
+            length=i[2]
+            i[0]=in_start
+            i[1]=out_start
 
+    def in_range(num):
+        for i in seed_ranges:
+            if num>=i[0] and num<i[0]+i[1]:
+                return True
+        return False
 
     def check(inp,arr):
         out=None
@@ -89,24 +107,23 @@ with open("day_5_input.txt","r") as file:
             out=inp
         #print(f"Input: {inp}, Output: {out}")
         return out
-    print(water_light)
-    locations=[]
-    for seed in init_seeds_ints:
-        print(f"Seed:{seed}")
-        soil=check(seed,seed_soil)
-        print(f"Soil:{soil}")
-        fert=check(soil,soil_fert)
-        print(f"Fert:{fert}")
-        water=check(fert,fert_water)
-        print(f"Water:{water}")
-        light=check(water,water_light)
-        print(f"Light:{light}")
-        temp=check(light,light_temp)
-        print(f"Temp:{temp}")
-        hum=check(temp,temp_hum)
-        print(f"Hum:{hum}")
-        location=check(hum,hum_location)
-        print(f"Location:{location}")
-        locations.append(location)
-    
-    print(min(locations))
+    done=False
+    #i=0
+    i=6310000
+    while True:
+        num=i
+        if done:
+            break
+        print(i)
+        for q in range(len(rules)-1,-1,-1):
+            #print(q)
+            
+            num=check(num,rules[q])
+            #print(f"q:{q}, num:{num}")
+        #print(f"Checking range:{num}")
+        if in_range(num):
+            print(f"Done:{i}")
+            done=True
+        i+=1
+        #print(f"num:{num}")
+    #print(water_light)
